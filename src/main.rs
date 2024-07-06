@@ -23,27 +23,19 @@ impl ApplicationHandler for App {
                 )
                 .unwrap(),
         );
+        unsafe { self.create() }.unwrap();
     }
 
     fn window_event(&mut self, event_loop: &ActiveEventLoop, id: WindowId, event: WindowEvent) {
         match event {
             WindowEvent::CloseRequested => {
                 event_loop.exit();
+                unsafe {
+                    self.destroy();
+                }
             }
-            WindowEvent::RedrawRequested => {
-                // Redraw the application.
-                //
-                // It's preferable for applications that do not render continuously to render in
-                // this event rather than in AboutToWait, since rendering in here allows
-                // the program to gracefully handle redraws requested by the OS.
-
-                // Draw.
-
-                // Queue a RedrawRequested event.
-                //
-                // You only need to call this if you've determined that you need to redraw in
-                // applications which do not always need to. Applications that redraw continuously
-                // can render here instead.
+            WindowEvent::RedrawRequested if !event_loop.exiting() => {
+                unsafe { self.render() }.unwrap();
                 self.window.as_ref().unwrap().request_redraw();
             }
             _ => (),
@@ -75,12 +67,12 @@ struct App {
 
 impl App {
     /// Creates our Vulkan app.
-    unsafe fn create(window: &Window) -> Result<Self> {
-        Ok(Self { window: None })
+    unsafe fn create(&mut self) -> Result<()> {
+        Ok(())
     }
 
     /// Renders a frame for our Vulkan app.
-    unsafe fn render(&mut self, window: &Window) -> Result<()> {
+    unsafe fn render(&mut self) -> Result<()> {
         Ok(())
     }
 
