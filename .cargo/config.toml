@@ -1,0 +1,4 @@
+[env]
+RUST_LOG = "debug"
+RUST_BACKTRACE = "1"
+VK_ENABLE_VALIDATION = "1"
